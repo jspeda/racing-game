@@ -55,10 +55,10 @@ window.onload = function() {
   const handler = (e) => {
     start.parentNode.removeChild(start);
     ballReset();
-    car1.onLoad = () => {
+    car1.onload = () => {
       car1Loaded = true;
       console.log('hi')
-    }
+    };
     car1.src = "car.png";
     setInterval(updateAll, 1000/framesPerSecond);
     e.target.removeEventListener(e.tyle, arguments.callee);
@@ -183,7 +183,7 @@ const drawAll = () => {
   // colorCircle(ballX,ballY, 10, '#24aadb');
 
   if (car1Loaded) {
-    canvasContext.drawImage(car1, ballX-carPic.width/2, ballY-carPick.height/2);
+    canvasContext.drawImage(car1, ballX-car1.width/2, ballY-car1.height/2);
   }
 
   drawTracks();
