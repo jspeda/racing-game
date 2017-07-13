@@ -2,10 +2,9 @@ const car1 = document.createElement("img");
 let car1Loaded = false;
 
 let carX = 75;
-let carSpeedX = 5;
 let carY = 75;
-let carSpeedY = 7;
 let carAng = 0;
+let carSpeed = 2;
 
 const trackW = 40;
 const trackH = 40;
@@ -87,25 +86,9 @@ const carReset = () => {
 }
 
 const carMove = () => {
-  // carX += carSpeedX;
-  // carY += carSpeedY;
+  carX += Math.cos(carAng) * carSpeed;
+  carY += Math.sin(carAng) * carSpeed;
   carAng += 0.02;
-
-  if (carX > canvas.width && carSpeedX > 0) {
-    carSpeedX *= -1;
-  }
-
-  if (carX < 0 && carSpeedX < 0) {
-    carSpeedX *= -1;
-  }
-
-  if (carY > canvas.height) {
-    carReset();
-  }
-
-  if (carY < 0 && carSpeedY < 0) {
-    carSpeedY *= -1;
-  }
 }
 
 const isTrackAtColRow = (col, row) => {
@@ -129,32 +112,7 @@ const carTrackHandling = () => {
       carTrackRow >= 0 && carTrackRow < trackRows) {
 
         if (isTrackAtColRow(carTrackCol, carTrackRow)) {
-
-          let prevCarX = carX - carSpeedX;
-          let prevCarY = carY - carSpeedY;
-          let prevTrackCol = Math.floor(prevCarX / trackW);
-          let prevTrackRow = Math.floor(prevCarY / trackH);
-
-          let bothTestsFailed = true;
-
-          if (prevTrackCol != carTrackCol) {
-            if (isTrackAtColRow(prevTrackCol, carTrackRow) == false) {
-              carSpeedX *= -1;
-              bothTestsFailed = false;
-            }
-          }
-
-          if (prevTrackRow != carTrackRow) {
-            if (isTrackAtColRow(carTrackCol, carTrackRow) == false) {
-              carSpeedY *= -1;
-              bothTestsFailed = false;
-            }
-          }
-
-          if (bothTestsFailed) {
-            carSpeedX *= -1;
-            carSpeedY *= -1;
-          }
+          carSpeed *= -1;  
         }
   }
 }
