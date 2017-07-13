@@ -4,7 +4,7 @@ let car1Loaded = false;
 let carX = 75;
 let carY = 75;
 let carAng = 0;
-let carSpeed = 2;
+let carSpeed = 0;
 
 const trackW = 40;
 const trackH = 40;
@@ -30,6 +30,16 @@ let trackGrid = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 
 let canvas, canvasContext;
 
+const keyLeftArrow = 37;
+const keyUpArrow = 38;
+const keyRightArrow = 39;
+const keyDownArrow = 40;
+
+let keyHeldGas = false;
+let keyHeldReverse = false;
+let keyHeldTurnLeft = false;
+let keyHeldTurnRight = false;
+
 let mouseX, mouseY;
 
 
@@ -42,6 +52,36 @@ const updateMousePos = (e) => {
 
 }
 
+const keyPressed = (e) => {
+  if (e.keyCode === keyLeftArrow) {
+    keyHeldTurnLeft = true;
+  }
+  if (e.keyCode === keyRightArrow) {
+    keyHeldTurnRight = true;
+  }
+  if (e.keyCode === keyUpArrow) {
+    keyHeldGas = true;
+  }
+  if (e.keyCode === keyDownArrow) {
+    keyHeldReverse = true;
+  }
+}
+
+const keyReleased = (e) => {
+  if (e.keyCode === keyLeftArrow) {
+    keyHeldTurnLeft = false;
+  }
+  if (e.keyCode === keyRightArrow) {
+    keyHeldTurnRight = false;
+  }
+  if (e.keyCode === keyUpArrow) {
+    keyHeldGas = false;
+  }
+  if (e.keyCode === keyDownArrow) {
+    keyHeldReverse = false;
+  }
+}
+
 window.onload = function() {
 
   canvas = document.getElementById('canvas');
@@ -49,6 +89,9 @@ window.onload = function() {
 
   const framesPerSecond = 30;
   canvas.addEventListener('mousemove', updateMousePos);
+
+  document.addEventListener('keydown', keyPressed);
+  document.addEventListener('keyup', keyReleased);
 
   const start = document.querySelector('.start');
 
@@ -86,9 +129,14 @@ const carReset = () => {
 }
 
 const carMove = () => {
+  carSpeed *= 0.98;
+  if (keyHeldGas) carSpeed += 0.3;
+  if (keyHeldReverse) carSpeed += 0.3;
+  if (keyHeldTurnLeft) carAng -= 0.04;
+  if (keyHeldTurnRight) carAng += 0.04;
+
   carX += Math.cos(carAng) * carSpeed;
   carY += Math.sin(carAng) * carSpeed;
-  carAng += 0.02;
 }
 
 const isTrackAtColRow = (col, row) => {
@@ -111,9 +159,11 @@ const carTrackHandling = () => {
   if (carTrackCol >= 0 && carTrackCol < trackCols &&
       carTrackRow >= 0 && carTrackRow < trackRows) {
 
-        if (isTrackAtColRow(carTrackCol, carTrackRow)) {
-          carSpeed *= -1;  
-        }
+    if (isTrackAtColRow(carTrackCol, carTrackRow)) {
+      carX -= Math.cos(carAng) * carSpeed;
+      carY -= Math.sin(carAng) * carSpeed;
+      carSpeed *= -0.5;
+    }
   }
 }
 
