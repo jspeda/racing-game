@@ -1,10 +1,11 @@
 const car1 = document.createElement("img");
 let car1Loaded = false;
 
-let ballX = 75;
-let ballSpeedX = 5;
-let ballY = 75;
-let ballSpeedY = 7;
+let carX = 75;
+let carSpeedX = 5;
+let carY = 75;
+let carSpeedY = 7;
+let carAng = 0;
 
 const trackW = 40;
 const trackH = 40;
@@ -54,7 +55,7 @@ window.onload = function() {
 
   const handler = (e) => {
     start.parentNode.removeChild(start);
-    ballReset();
+    carReset();
     car1.onload = () => {
       car1Loaded = true;
       console.log('hi')
@@ -72,37 +73,38 @@ const updateAll = () => {
   drawAll();
 }
 
-const ballReset = () => {
+const carReset = () => {
   for (let eachRow = 0; eachRow < trackRows; eachRow++) {
     for (let eachCol = 0; eachCol < trackCols; eachCol++) {
       let arrayIndex = rowColToArrayIndex(eachCol, eachRow);
       if (trackGrid[arrayIndex] === 2) {
         trackGrid[arrayIndex] = 0;
-        ballX = eachCol * trackW + (trackW / 2);
-        ballY = eachRow * trackH + (trackH / 2);
+        carX = eachCol * trackW + (trackW / 2);
+        carY = eachRow * trackH + (trackH / 2);
       }
     }
   }
 }
 
-const ballMove = () => {
-  ballX += ballSpeedX;
-  ballY += ballSpeedY;
+const carMove = () => {
+  // carX += carSpeedX;
+  // carY += carSpeedY;
+  carAng += 0.02;
 
-  if (ballX > canvas.width && ballSpeedX > 0) {
-    ballSpeedX *= -1;
+  if (carX > canvas.width && carSpeedX > 0) {
+    carSpeedX *= -1;
   }
 
-  if (ballX < 0 && ballSpeedX < 0) {
-    ballSpeedX *= -1;
+  if (carX < 0 && carSpeedX < 0) {
+    carSpeedX *= -1;
   }
 
-  if (ballY > canvas.height) {
-    ballReset();
+  if (carY > canvas.height) {
+    carReset();
   }
 
-  if (ballY < 0 && ballSpeedY < 0) {
-    ballSpeedY *= -1;
+  if (carY < 0 && carSpeedY < 0) {
+    carSpeedY *= -1;
   }
 }
 
@@ -117,49 +119,49 @@ const isTrackAtColRow = (col, row) => {
   }
 }
 
-const ballTrackHandling = () => {
-  let ballTrackCol = Math.floor(ballX / trackW);
-  let ballTrackRow = Math.floor(ballY / trackH);
-  let trackIndexUnderBall = rowColToArrayIndex(ballTrackCol, ballTrackRow);
+const carTrackHandling = () => {
+  let carTrackCol = Math.floor(carX / trackW);
+  let carTrackRow = Math.floor(carY / trackH);
+  let trackIndexUnderCar = rowColToArrayIndex(carTrackCol, carTrackRow);
   // colorText(`${mouseTrackCol}, ${mouseTrackRow} : ${trackIndexUnderMouse}`, mouseX,mouseY, 'yellow');
 
-  if (ballTrackCol >= 0 && ballTrackCol < trackCols &&
-      ballTrackRow >= 0 && ballTrackRow < trackRows) {
+  if (carTrackCol >= 0 && carTrackCol < trackCols &&
+      carTrackRow >= 0 && carTrackRow < trackRows) {
 
-        if (isTrackAtColRow(ballTrackCol, ballTrackRow)) {
+        if (isTrackAtColRow(carTrackCol, carTrackRow)) {
 
-          let prevBallX = ballX - ballSpeedX;
-          let prevBallY = ballY - ballSpeedY;
-          let prevTrackCol = Math.floor(prevBallX / trackW);
-          let prevTrackRow = Math.floor(prevBallY / trackH);
+          let prevCarX = carX - carSpeedX;
+          let prevCarY = carY - carSpeedY;
+          let prevTrackCol = Math.floor(prevCarX / trackW);
+          let prevTrackRow = Math.floor(prevCarY / trackH);
 
           let bothTestsFailed = true;
 
-          if (prevTrackCol != ballTrackCol) {
-            if (isTrackAtColRow(prevTrackCol, ballTrackRow) == false) {
-              ballSpeedX *= -1;
+          if (prevTrackCol != carTrackCol) {
+            if (isTrackAtColRow(prevTrackCol, carTrackRow) == false) {
+              carSpeedX *= -1;
               bothTestsFailed = false;
             }
           }
 
-          if (prevTrackRow != ballTrackRow) {
-            if (isTrackAtColRow(ballTrackCol, ballTrackRow) == false) {
-              ballSpeedY *= -1;
+          if (prevTrackRow != carTrackRow) {
+            if (isTrackAtColRow(carTrackCol, carTrackRow) == false) {
+              carSpeedY *= -1;
               bothTestsFailed = false;
             }
           }
 
           if (bothTestsFailed) {
-            ballSpeedX *= -1;
-            ballSpeedY *= -1;
+            carSpeedX *= -1;
+            carSpeedY *= -1;
           }
         }
   }
 }
 
 const moveAll = () => {
-  // ballMove();
-  ballTrackHandling();
+  carMove();
+  carTrackHandling();
 }
 
 const rowColToArrayIndex = (col, row) => {
@@ -180,10 +182,10 @@ const drawTracks = () => {
 
 const drawAll = () => {
   colorRect(0,0, canvas.width, canvas.height, 'black');
-  // colorCircle(ballX,ballY, 10, '#24aadb');
+  // colorCircle(carX,carY, 10, '#24aadb');
 
   if (car1Loaded) {
-    canvasContext.drawImage(car1, ballX-car1.width/2, ballY-car1.height/2);
+    drawBitmapCenteredWithRotation(car1, carX, carY, carAng);
   }
 
   drawTracks();
@@ -194,8 +196,16 @@ const colorRect = (topLeftX, topLeftY, boxWidth, boxHeight, fillColor) => {
   canvasContext.fillRect(topLeftX,topLeftY, boxWidth,boxHeight);
 }
 
+const drawBitmapCenteredWithRotation = (useBitmap, atX, atY, withAng) => {
+  canvasContext.save();
+  canvasContext.translate(atX, atY);
+  canvasContext.rotate(withAng);
+  canvasContext.drawImage(useBitmap, -useBitmap.width/2, -useBitmap.height/2);
+  canvasContext.restore();
+}
+
 const colorCircle = (centerX,centerY, radius, fillColor) => {
-  console.log(`x: ${ballX}, y: ${ballY}`);
+  console.log(`x: ${carX}, y: ${carY}`);
   canvasContext.fillStyle = fillColor;
   canvasContext.beginPath();
   canvasContext.arc(centerX,centerY, radius, 0,Math.PI*2, true);
