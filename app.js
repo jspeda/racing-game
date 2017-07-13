@@ -121,6 +121,7 @@ const carReset = () => {
       let arrayIndex = rowColToArrayIndex(eachCol, eachRow);
       if (trackGrid[arrayIndex] === 2) {
         trackGrid[arrayIndex] = 0;
+        carAng = -Math.PI/2;
         carX = eachCol * trackW + (trackW / 2);
         carY = eachRow * trackH + (trackH / 2);
       }
@@ -131,7 +132,7 @@ const carReset = () => {
 const carMove = () => {
   carSpeed *= 0.98;
   if (keyHeldGas) carSpeed += 0.3;
-  if (keyHeldReverse) carSpeed += 0.3;
+  if (keyHeldReverse) carSpeed -= 0.3;
   if (keyHeldTurnLeft) carAng -= 0.04;
   if (keyHeldTurnRight) carAng += 0.04;
 
