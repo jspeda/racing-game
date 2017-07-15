@@ -14,6 +14,7 @@ window.onload = function() {
   const handler = (e) => {
     start.parentNode.removeChild(start);
     carReset();
+    trackLoadImages();
     car1.onload = () => {
       car1Loaded = true;
       console.log('hi')
@@ -74,10 +75,8 @@ const moveAll = () => {
 
 const drawAll = () => {
   colorRect(0,0, canvas.width, canvas.height, 'black');
-
+  drawTracks();
   if (car1Loaded) {
     drawBitmapCenteredWithRotation(car1, carX, carY, carAng);
   }
-
-  drawTracks();
 }

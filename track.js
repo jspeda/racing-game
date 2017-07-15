@@ -1,3 +1,6 @@
+const roadPic = document.createElement('img');
+const wallPic = document.createElement('img');
+
 const trackW = 40;
 const trackH = 40;
 const trackGap = 2;
@@ -24,6 +27,11 @@ const trackRoad = 0;
 const trackWall = 1;
 const trackPlayerStart = 2;
 
+const trackLoadImages = () => {
+  roadPic.src = 'road.png';
+  wallPic.src = 'wall.png'
+}
+
 const carTrackHandling = () => {
   let carTrackCol = Math.floor(carX / trackW);
   let carTrackRow = Math.floor(carY / trackH);
@@ -49,8 +57,12 @@ const drawTracks = () => {
     trackGrid.map((track, index) => {
       let arrayIndex = rowColToArrayIndex(index, eachRow);
       if (trackGrid[arrayIndex] == 1) {
+        // canvasContext.drawImage(wallPic,trackW*index, trackH*eachRow)
         colorRect(trackW*index, trackH*eachRow,
           trackW-trackGap, trackH-trackGap, 'pink')
+      }
+      else if (trackGrid[arrayIndex] == 0) {
+        canvasContext.drawImage(roadPic, trackW*index, trackH*eachRow);
       }
     })
   }
